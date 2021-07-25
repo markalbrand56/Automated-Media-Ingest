@@ -23,7 +23,8 @@ func main() {
 
 	localDest := "C:\\Users\\marka\\Coding\\Proyectos\\Automated Media Ingest\\DD\\"
 	destination := destiny(currentTime, localDest)
-
-	fmt.Print(copy(source, destination))
+	fmt.Println(source)
+	fmt.Println(destination)
+	//fmt.Print(copy(source, destination))
 
 }

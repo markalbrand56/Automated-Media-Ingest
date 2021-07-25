@@ -1,17 +1,15 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"os"
 )
 
 func path() string { /*Path of the SD card itself*/
-	scanner := bufio.NewScanner(os.Stdin)
+	var letterSD string
 	fmt.Println("Ingrese la letra de la tarjeta SD: ") // Temporal
-	scanner.Scan()
-	letterSD := scanner.Text()
+	fmt.Scanf("%s", &letterSD)
 
 	SonyFiles := "\\DCIM\\100MSDCF"
 	sdPath := letterSD + ":" + SonyFiles
