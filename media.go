@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"os"
+	"strings"
 )
 
 func path() string { /*Path of the SD card itself*/
@@ -22,8 +25,22 @@ func destiny(folderName string, localPath string) string { /*Path to the new fol
 	return destinyPath
 }
 
-func searchMedia(mediaTypes string, pathFolder string) { /*Search for all media in the SD card*/
+func searchMedia(mediaTypes []string, pathFolder string) []string { /*Search for all media in the SD card*/
 	/*Find all media to ingest*/
+	var filesToCopy []string
+
+	files, err := ioutil.ReadDir(pathFolder)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range files {
+		for _, fileType := range mediaTypes {
+			if strings.HasSuffix(file.Name(), fileType) {
+				filesToCopy = append(filesToCopy, file.Name())
+			}
+		}
+	}
+	return filesToCopy
 }
 
 func copy(src, dst string) (int64, error) {

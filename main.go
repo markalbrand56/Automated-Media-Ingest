@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	dataTypes := [4]string{".mp4", ".arw", ".jpg"}
+	dataTypes := []string{".MP4", ".ARW", ".JPG"}
 
 	currentTime := time.Now().Format("2006-01-02")
 
@@ -26,5 +26,6 @@ func main() {
 	fmt.Println(source)
 	fmt.Println(destination)
 	//fmt.Print(copy(source, destination))
+	fmt.Println(searchMedia(dataTypes, "C:\\Users\\marka\\Pictures\\Sony Alpha\\29-07-2021"))
 
 }
