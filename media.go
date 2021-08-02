@@ -9,19 +9,16 @@ import (
 	"strings"
 )
 
-func path() string { /*Path of the SD card itself*/
-	var letterSD string
-	fmt.Println("Ingrese la letra de la tarjeta SD: ") // Temporal
-	fmt.Scanf("%s", &letterSD)
+func path(letter string) string { /*Path of the SD card itself*/
 
 	SonyFiles := "\\DCIM\\100MSDCF"
-	sdPath := letterSD + ":" + SonyFiles
+	sdPath := letter + ":" + SonyFiles
 
 	return sdPath
 }
 
 func destiny(folderName string, localPath string) string { /*Path to the new folder in the device*/
-	destinyPath := localPath + folderName
+	destinyPath := localPath + folderName + "\\"
 	return destinyPath
 }
 
@@ -46,6 +43,7 @@ func searchMedia(mediaTypes []string, pathFolder string) []string { /*Search for
 func copy(src, dst string) (int64, error) {
 	// https://opensource.com/article/18/6/copying-files-go
 	// Needs absolute path
+
 	sourceFileStat, err := os.Stat(src)
 	if err != nil {
 		return 0, err
