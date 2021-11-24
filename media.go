@@ -9,7 +9,8 @@ import (
 	"strings"
 )
 
-func path(letter string) string { /*Path of the SD card itself*/
+// Builds the Sony file System using the specified letter of the SD card
+func path(letter string) string {
 
 	SonyFiles := "\\DCIM\\100MSDCF"
 	sdPath := letter + ":" + SonyFiles
@@ -17,11 +18,13 @@ func path(letter string) string { /*Path of the SD card itself*/
 	return sdPath
 }
 
+// Builds the path to the new destination
 func destiny(folderName string, localPath string) string { /*Path to the new folder in the device*/
 	destinyPath := localPath + folderName + "\\"
 	return destinyPath
 }
 
+// Searches for all media that will be copied from the source directory
 func searchMedia(mediaTypes []string, pathFolder string) []string { /*Search for all media in the SD card*/
 	/*Find all media to ingest*/
 	var filesToCopy []string
@@ -40,6 +43,7 @@ func searchMedia(mediaTypes []string, pathFolder string) []string { /*Search for
 	return filesToCopy
 }
 
+// Copies the specified file from its source directory to the new directory
 func copy(src, dst, file string) (int64, error) {
 	/* src: Complete path of original file
 	* dst: Path to new folder
@@ -47,7 +51,6 @@ func copy(src, dst, file string) (int64, error) {
 	 */
 	// https://opensource.com/article/18/6/copying-files-go
 	// https://golangbyexample.com/copy-file-go/
-	// Needs absolute path
 
 	var newFile string = dst + "\\" + file // The complete path for the new file
 
