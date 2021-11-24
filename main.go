@@ -7,24 +7,6 @@ import (
 )
 
 func main() {
-	/*
-		source := path()
-		dataTypes := []string{".MP4", ".ARW", ".JPG"}
-		var files = searchMedia(dataTypes, source)
-
-		currentTime := time.Now().Format("2006-01-02")
-
-		source = source + "\\M4K04804.JPG" // Example
-
-		localDest := "C:\\Users\\marka\\Coding\\Proyectos\\Automated Media Ingest\\DD\\"
-		destination := destiny(currentTime, localDest)
-
-		fmt.Println(source)
-		fmt.Println(destination)
-		//fmt.Print(copy(source, destination))
-
-		fmt.Println(searchMedia(dataTypes, "C:\\Users\\marka\\Pictures\\Sony Alpha\\29-07-2021"))
-	*/
 	var source string
 	var files []string
 	var localDestination = "C:\\Users\\marka\\Coding\\Proyectos\\Automated Media Ingest\\DD\\"
@@ -47,10 +29,14 @@ func main() {
 
 	for _, file := range files {
 		fileOrigin := source + "\\" + file
-		fmt.Println("File: " + fileOrigin)
-		bytes, err := copy(fileOrigin, destination)
-		fmt.Println(bytes)
-		fmt.Println(err)
+		//fmt.Println("File: " + fileOrigin)
+		bytes, err := copy(fileOrigin, destination, file)
+		if err == nil {
+			fmt.Printf("Copied '%s' correctly (%d)\n", file, bytes)
+		} else {
+			fmt.Printf("Failed to copy '%s'", file)
+			fmt.Println(err)
+		}
 	}
 
 }

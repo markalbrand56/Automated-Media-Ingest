@@ -40,16 +40,37 @@ func searchMedia(mediaTypes []string, pathFolder string) []string { /*Search for
 	return filesToCopy
 }
 
-func copy(src, dst string) (int64, error) {
+func copy(src, dst, file string) (int64, error) {
+	/* src: Complete path of original file
+	* dst: Path to new folder
+	* file: Name of the file to copy
+	 */
 	// https://opensource.com/article/18/6/copying-files-go
+	// https://golangbyexample.com/copy-file-go/
 	// Needs absolute path
 
-	sourceFileStat, err := os.Stat(src)
+	var newFile string = dst + "\\" + file // The complete path for the new file
+
+	sourceFileStat, err := os.Stat(src) // If the original file exists
 	if err != nil {
 		return 0, err
 	}
 
-	if !sourceFileStat.Mode().IsRegular() {
+	if _, err := os.Stat(newFile); err == nil { // If the file to be copied already exists in dst
+		return 0, err // It's not an error. 0 bytes copied
+	}
+
+	_, err = os.Stat(dst)
+
+	if os.IsNotExist(err) { // If the new directory exists
+		errDir := os.MkdirAll(dst, 0755)
+		if errDir != nil {
+			log.Fatal(err)
+		}
+
+	}
+
+	if !sourceFileStat.Mode().IsRegular() { // If the file is regular
 		return 0, fmt.Errorf("%s is not a regular file", src)
 	}
 
@@ -59,10 +80,12 @@ func copy(src, dst string) (int64, error) {
 	}
 	defer source.Close()
 
-	destination, err := os.Create(dst)
+	destination, err := os.Create(newFile)
+
 	if err != nil {
 		return 0, err
 	}
+
 	defer destination.Close()
 	nBytes, err := io.Copy(destination, source)
 	return nBytes, err
