@@ -16,7 +16,7 @@ func main() {
 
 	dataTypes := []string{".MP4", ".ARW", ".JPG"}
 
-	fmt.Println("Ingrese la letra de la tarjeta SD: ") // Temporal
+	fmt.Println("Enter the path letter for the SD card: ") // Temporal
 	fmt.Scanf("%s", &letterSD)
 
 	source = path(letterSD)
