@@ -9,7 +9,7 @@ import (
 func main() {
 	var source string
 	var files []string
-	const localDestination = "C:\\Users\\marka\\Coding\\Proyectos\\Automated Media Ingest\\DD\\"
+	const localDestination = "C:\\Users\\marka\\Coding\\Proyectos\\Automated Media Ingest\\tests\\"
 	var date string = time.Now().Format("2006-01-02")
 	var destination string = destiny(date, localDestination)
 	var letterSD string
