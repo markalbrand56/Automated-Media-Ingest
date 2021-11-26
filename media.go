@@ -26,7 +26,7 @@ func pathVideos(letter string) string {
 	return sdPath
 }
 
-// Builds the pathImages to the new destination
+// Builds the path to the new destination
 func destiny(folderName string, localPath string) string {
 	destinyPath := localPath + folderName + "\\"
 	return destinyPath
@@ -53,14 +53,14 @@ func searchMedia(mediaTypes []string, pathFolder string) []string {
 
 // Copies the specified file from its source directory to the new directory
 func copy(src, dst, file string) (int64, error) {
-	/* src: Complete pathImages of original file
+	/* src: Complete path of original file
 	 * dst: Path to new folder
 	 * file: Name of the file to copy
 	 * https://opensource.com/article/18/6/copying-files-go
 	 * https://golangbyexample.com/copy-file-go/
 	 */
 
-	newFile := dst + "\\" + file // The complete pathImages for the new file
+	newFile := dst + "\\" + file // The complete path for the new file
 
 	if _, err := os.Stat(newFile); err == nil { // If the file to be copied already exists in dst
 		return 0, err // It's not an error. 0 bytes copied
