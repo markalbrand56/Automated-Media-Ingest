@@ -1,21 +1,72 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 )
 
-func main() {
-	var sourceImages string                                                                         // Sony's path for images
-	var images []string                                                                             // Images to be copied
-	var sourceVideos string                                                                         // Sony's path for videos
-	var videos []string                                                                             // Videos to be copied
-	var letterSD string                                                                             // Path letter ('D:', 'F:', ...)
-	var dataTypes = []string{".MP4", ".ARW", ".JPG"}                                                // File formats to copy
-	const localDestination = "C:\\Users\\marka\\Coding\\Proyectos\\Automated Media Ingest\\tests\\" // Main destination
+type Configuration struct {
+	Destiny string
+	Pattern string
+}
 
-	fmt.Println("Enter the path letter for the SD card: ")
+func main() {
+	var sourceImages string                          // Sony's path for images
+	var images []string                              // Images to be copied
+	var sourceVideos string                          // Sony's path for videos
+	var videos []string                              // Videos to be copied
+	var letterSD string                              // Path letter ('D:', 'F:', ...)
+	var dataTypes = []string{".MP4", ".ARW", ".JPG"} // File formats to copy
+	var config Configuration
+
+	// Checking fot the config file
+	found := false
+	for found != true {
+		_, err := os.Stat(".\\config.json")
+
+		if err != nil {
+			fmt.Println("File not found")
+
+			newConfig := Configuration{}
+			var newDestiny string
+			var newPattern string
+
+			fmt.Printf("Please enter the destination folder: ")
+			fmt.Scanf("%s", &newDestiny)
+
+			fmt.Printf("Please enter the pattern for the new folders: ")
+			fmt.Scanf("%s", &newPattern)
+
+			newConfig.Destiny = newDestiny
+			newConfig.Pattern = newPattern
+
+			os.Create(".\\config.json")
+			file, _ := json.MarshalIndent(newConfig, "", " ")
+			_ = ioutil.WriteFile(".\\config.json", file, 0644)
+
+			found = true
+
+		} else {
+			fmt.Println("File found")
+			found = true
+		}
+	}
+
+	// Configuration load
+	content, err := ioutil.ReadFile("./config.json")
+	if err != nil {
+		fmt.Println("Error when opening file: ", err)
+		// TODO Error handling, non-existing file
+	}
+	err = json.Unmarshal(content, &config)
+	if err != nil {
+		fmt.Println("Error during Unmarshal(): ", err)
+	}
+
+	fmt.Println("\nEnter the path letter for the SD card: ")
 	fmt.Scanf("%s", &letterSD)
 	letterSD = strings.ToUpper(letterSD) // Always on uppercase
 
@@ -38,8 +89,8 @@ func main() {
 			continue
 		}
 
-		date := sourceFileStat.ModTime().Format("2006-01-02") // Modification date.
-		newDestiny := destiny(date, localDestination)         // Complete path to new destination
+		date := sourceFileStat.ModTime().Format(config.Pattern) // Modification date.
+		newDestiny := destiny(date, config.Destiny)             // Complete path to new destination
 
 		bytes, err := copy(fileOrigin, newDestiny, file)
 
@@ -64,7 +115,7 @@ func main() {
 		}
 
 		date := sourceFileStat.ModTime().Format("2006-01-02") // Modification date.
-		newDestiny := destiny(date, localDestination)         // Complete path to new destination
+		newDestiny := destiny(date, config.Destiny)           // Complete path to new destination
 
 		bytes, err := copy(fileOrigin, newDestiny, file)
 

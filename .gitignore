@@ -3,3 +3,4 @@
 *.ARW
 *.JPG
 tests
+/config.json
