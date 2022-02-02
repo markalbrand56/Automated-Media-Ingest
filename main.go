@@ -21,7 +21,7 @@ func main() {
 	var videos []string                              // Videos to be copied
 	var letterSD string                              // Path letter ('D:', 'F:', ...)
 	var dataTypes = []string{".MP4", ".ARW", ".JPG"} // File formats to copy
-	var config Configuration
+	var config Configuration                         // Configuration for the program
 
 	// Checking fot the config file
 	found := false
@@ -34,12 +34,12 @@ func main() {
 			newConfig := Configuration{}
 			var newDestiny string
 			var newPattern string
-			consoleReader := bufio.NewReader(os.Stdin)  // Complex strings, allows spaces in the address
+			consoleReader := bufio.NewReader(os.Stdin) // Complex strings, allows spaces in the address
 
 			fmt.Println("Enter the destination")
 			newDestiny, err = consoleReader.ReadString('\n')
 			newDestiny = strings.TrimSuffix(newDestiny, "\n")
-			if err != nil{
+			if err != nil {
 				fmt.Println(err.Error())
 				return
 			}
@@ -57,9 +57,11 @@ func main() {
 			// Creation of the config file
 			os.Create(".\\config.json")
 			file, _ := json.MarshalIndent(newConfig, "", " ")
-			_ = ioutil.WriteFile(".\\config.json", file, 0644)
+			err = ioutil.WriteFile(".\\config.json", file, 0644)
 
-			found = true
+			if err == nil {
+				found = true
+			}
 
 		} else {
 			fmt.Println("File found")
