@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -33,16 +34,27 @@ func main() {
 			newConfig := Configuration{}
 			var newDestiny string
 			var newPattern string
+			consoleReader := bufio.NewReader(os.Stdin)  // Complex strings, allows spaces in the address
 
-			fmt.Printf("Please enter the destination folder: ")
-			fmt.Scanf("%s", &newDestiny)
+			fmt.Println("Enter the destination")
+			newDestiny, err = consoleReader.ReadString('\n')
+			newDestiny = strings.TrimSuffix(newDestiny, "\n")
+			if err != nil{
+				fmt.Println(err.Error())
+				return
+			}
 
-			fmt.Printf("Please enter the pattern for the new folders: ")
-			fmt.Scanf("%s", &newPattern)
+			fmt.Println("Enter the pattern")
+			_, err := fmt.Scanln(&newPattern)
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
 
 			newConfig.Destiny = newDestiny
 			newConfig.Pattern = newPattern
 
+			// Creation of the config file
 			os.Create(".\\config.json")
 			file, _ := json.MarshalIndent(newConfig, "", " ")
 			_ = ioutil.WriteFile(".\\config.json", file, 0644)
@@ -67,7 +79,7 @@ func main() {
 	}
 
 	fmt.Println("\nEnter the path letter for the SD card: ")
-	fmt.Scanf("%s", &letterSD)
+	fmt.Scanln(&letterSD)
 	letterSD = strings.ToUpper(letterSD) // Always on uppercase
 
 	// Media search
