@@ -143,6 +143,7 @@ func main() {
 			fmt.Println(err)
 		}
 	}
-	fmt.Printf("\nCopied correctly %d files", filesCopied)
-
+	fmt.Printf("\nCopied correctly %d files\nPress enter to exit  ", filesCopied)
+	var exit string
+	fmt.Scanln(&exit)
 }
