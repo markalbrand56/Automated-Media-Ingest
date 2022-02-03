@@ -92,6 +92,7 @@ func main() {
 	videos = searchMedia(dataTypes, sourceVideos)
 
 	// Copying images
+	filesCopied := 0
 	for _, file := range images {
 		fileOrigin := sourceImages + "\\" + file // Complete pathImages to the original file
 
@@ -110,6 +111,7 @@ func main() {
 
 		if err == nil {
 			fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
+			filesCopied++
 		} else {
 			fmt.Printf("Failed to copy '%s'\n", file)
 			fmt.Println(err)
@@ -135,10 +137,12 @@ func main() {
 
 		if err == nil {
 			fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
+			filesCopied++
 		} else {
 			fmt.Printf("Failed to copy '%s'\n", file)
 			fmt.Println(err)
 		}
 	}
+	fmt.Printf("\nCopied correctly %d files", filesCopied)
 
 }
