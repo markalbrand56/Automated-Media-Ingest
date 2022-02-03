@@ -1,5 +1,6 @@
-/Automated_Media_Ingest.exe
-.idea
+*.exe
+/.idea
 *.ARW
 *.JPG
-tests
+/tests
+config.json
