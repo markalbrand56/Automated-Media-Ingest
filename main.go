@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 )
 
 type Configuration struct {
@@ -93,14 +94,18 @@ func main() {
 
 	// Copying images
 	filesCopied := 0
+	start := time.Now()
+	transferErrors := 0
 	for _, file := range images {
 		fileOrigin := sourceImages + "\\" + file // Complete pathImages to the original file
 
 		sourceFileStat, err := os.Stat(fileOrigin) // Information about the file
 
 		if err != nil { // If the file exists
+			transferErrors++
 			continue
 		} else if !sourceFileStat.Mode().IsRegular() { // If it's a regular file
+			transferErrors++
 			continue
 		}
 
@@ -110,11 +115,13 @@ func main() {
 		bytes, err := copy(fileOrigin, newDestiny, file)
 
 		if err == nil {
-			fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
-			filesCopied++
+			if bytes > 0 {
+				fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
+				filesCopied++
+			}
 		} else {
 			fmt.Printf("Failed to copy '%s'\n", file)
-			fmt.Println(err)
+			transferErrors++
 		}
 	}
 
@@ -125,8 +132,10 @@ func main() {
 		sourceFileStat, err := os.Stat(fileOrigin) // Information about the file
 
 		if err != nil { // If the file exists
+			transferErrors++
 			continue
 		} else if !sourceFileStat.Mode().IsRegular() { // If it's a regular file
+			transferErrors++
 			continue
 		}
 
@@ -136,14 +145,21 @@ func main() {
 		bytes, err := copy(fileOrigin, newDestiny, file)
 
 		if err == nil {
-			fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
-			filesCopied++
+			if bytes > 0 {
+				fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
+				filesCopied++
+			}
 		} else {
 			fmt.Printf("Failed to copy '%s'\n", file)
-			fmt.Println(err)
+			transferErrors++
 		}
 	}
-	fmt.Printf("\nCopied correctly %d files\nPress enter to exit  ", filesCopied)
-	var exit string
-	fmt.Scanln(&exit)
+	if filesCopied == 0 && transferErrors == 0 { // All files already in destination
+		fmt.Println("\nThere were no new files to be copied")
+	} else if filesCopied > 0 {
+		fmt.Printf("\nCopied correctly %d files in %.2f seconds\n%d errors", filesCopied, time.Now().Sub(start).Seconds(), transferErrors)
+
+	}
+	fmt.Println("\n\nPress enter to exit")
+	fmt.Scanln()
 }
