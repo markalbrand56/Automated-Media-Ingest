@@ -74,7 +74,6 @@ func main() {
 	content, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		fmt.Println("Error when opening file: ", err)
-		// TODO Error handling, non-existing file
 	}
 	err = json.Unmarshal(content, &config)
 	if err != nil {
@@ -86,11 +85,20 @@ func main() {
 	letterSD = strings.ToUpper(letterSD) // Always on uppercase
 
 	// Media search
+	var sourceErrors int = 0 // if the value is 2, both sources were not found
 	sourceImages = pathImages(letterSD)
-	images = searchMedia(dataTypes, sourceImages)
+	images, err = searchMedia(dataTypes, sourceImages)
+	if err != nil {
+		fmt.Println("Error locating the source for the images")
+		sourceErrors++
+	}
 
 	sourceVideos = pathVideos(letterSD)
-	videos = searchMedia(dataTypes, sourceVideos)
+	videos, err = searchMedia(dataTypes, sourceVideos)
+	if err != nil {
+		fmt.Println("Error locating the source for the videos")
+		sourceErrors++
+	}
 
 	// Copying images
 	filesCopied := 0
@@ -154,9 +162,13 @@ func main() {
 			transferErrors++
 		}
 	}
-	if filesCopied == 0 && transferErrors == 0 { // All files already in destination
+
+	// Results
+	if sourceErrors >= 2 { // No source folder found
+		fmt.Println("\nThe program wasn't able to locate the desired media")
+	} else if filesCopied == 0 && transferErrors == 0 { // All files already in destination
 		fmt.Println("\nThere were no new files to be copied")
-	} else if filesCopied > 0 {
+	} else if filesCopied > 0 { // New files copied to destination
 		fmt.Printf("\nCopied correctly %d files in %.2f seconds\n%d errors", filesCopied, time.Now().Sub(start).Seconds(), transferErrors)
 
 	}

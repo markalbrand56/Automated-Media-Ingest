@@ -33,13 +33,13 @@ func destiny(folderName string, localPath string) string {
 }
 
 // Searches for all media that will be copied from the source directory
-func searchMedia(mediaTypes []string, pathFolder string) []string {
+func searchMedia(mediaTypes []string, pathFolder string) ([]string, error) {
 	//Finds all media to ingest
 	var filesToCopy []string
 
 	files, err := ioutil.ReadDir(pathFolder)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	for _, file := range files {
 		for _, fileType := range mediaTypes {
@@ -48,7 +48,7 @@ func searchMedia(mediaTypes []string, pathFolder string) []string {
 			}
 		}
 	}
-	return filesToCopy
+	return filesToCopy, err
 }
 
 // Copies the specified file from its source directory to the new directory
