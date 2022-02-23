@@ -101,10 +101,10 @@ func main() {
 
 		sourceFileStat, err := os.Stat(fileOrigin) // Information about the file
 
-		if err != nil { // If the file exists
+		if err != nil { // If the file doesn't exist
 			transferErrors++
 			continue
-		} else if !sourceFileStat.Mode().IsRegular() { // If it's a regular file
+		} else if !sourceFileStat.Mode().IsRegular() { // If it's not a regular file
 			transferErrors++
 			continue
 		}
@@ -112,10 +112,10 @@ func main() {
 		date := sourceFileStat.ModTime().Format(config.Pattern) // Modification date.
 		newDestiny := destiny(date, config.Destiny)             // Complete path to new destination
 
-		bytes, err := copy(fileOrigin, newDestiny, file)
+		bytes, err := copy(fileOrigin, newDestiny, file) // File transfer
 
-		if err == nil {
-			if bytes > 0 {
+		if err == nil { // No errors in the file transfer
+			if bytes > 0 { // If it actually copied the file
 				fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
 				filesCopied++
 			}
@@ -131,10 +131,10 @@ func main() {
 
 		sourceFileStat, err := os.Stat(fileOrigin) // Information about the file
 
-		if err != nil { // If the file exists
+		if err != nil { // If the file doesn't exist
 			transferErrors++
 			continue
-		} else if !sourceFileStat.Mode().IsRegular() { // If it's a regular file
+		} else if !sourceFileStat.Mode().IsRegular() { // If it's not a regular file
 			transferErrors++
 			continue
 		}
@@ -142,10 +142,10 @@ func main() {
 		date := sourceFileStat.ModTime().Format("2006-01-02") // Modification date.
 		newDestiny := destiny(date, config.Destiny)           // Complete path to new destination
 
-		bytes, err := copy(fileOrigin, newDestiny, file)
+		bytes, err := copy(fileOrigin, newDestiny, file) // File transfer
 
-		if err == nil {
-			if bytes > 0 {
+		if err == nil { // No errors in the file transfer
+			if bytes > 0 { // If it actually copied the file
 				fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
 				filesCopied++
 			}
