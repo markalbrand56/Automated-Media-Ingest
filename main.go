@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 )
 
 type Configuration struct {
@@ -73,7 +74,6 @@ func main() {
 	content, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		fmt.Println("Error when opening file: ", err)
-		// TODO Error handling, non-existing file
 	}
 	err = json.Unmarshal(content, &config)
 	if err != nil {
@@ -85,36 +85,51 @@ func main() {
 	letterSD = strings.ToUpper(letterSD) // Always on uppercase
 
 	// Media search
+	var sourceErrors int = 0 // if the value is 2, both sources were not found
 	sourceImages = pathImages(letterSD)
-	images = searchMedia(dataTypes, sourceImages)
+	images, err = searchMedia(dataTypes, sourceImages)
+	if err != nil {
+		fmt.Println("Error locating the source for the images")
+		sourceErrors++
+	}
 
 	sourceVideos = pathVideos(letterSD)
-	videos = searchMedia(dataTypes, sourceVideos)
+	videos, err = searchMedia(dataTypes, sourceVideos)
+	if err != nil {
+		fmt.Println("Error locating the source for the videos")
+		sourceErrors++
+	}
 
 	// Copying images
 	filesCopied := 0
+	start := time.Now()
+	transferErrors := 0
 	for _, file := range images {
 		fileOrigin := sourceImages + "\\" + file // Complete pathImages to the original file
 
 		sourceFileStat, err := os.Stat(fileOrigin) // Information about the file
 
-		if err != nil { // If the file exists
+		if err != nil { // If the file doesn't exist
+			transferErrors++
 			continue
-		} else if !sourceFileStat.Mode().IsRegular() { // If it's a regular file
+		} else if !sourceFileStat.Mode().IsRegular() { // If it's not a regular file
+			transferErrors++
 			continue
 		}
 
 		date := sourceFileStat.ModTime().Format(config.Pattern) // Modification date.
 		newDestiny := destiny(date, config.Destiny)             // Complete path to new destination
 
-		bytes, err := copy(fileOrigin, newDestiny, file)
+		bytes, err := copy(fileOrigin, newDestiny, file) // File transfer
 
-		if err == nil {
-			fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
-			filesCopied++
+		if err == nil { // No errors in the file transfer
+			if bytes > 0 { // If it actually copied the file
+				fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
+				filesCopied++
+			}
 		} else {
 			fmt.Printf("Failed to copy '%s'\n", file)
-			fmt.Println(err)
+			transferErrors++
 		}
 	}
 
@@ -124,26 +139,39 @@ func main() {
 
 		sourceFileStat, err := os.Stat(fileOrigin) // Information about the file
 
-		if err != nil { // If the file exists
+		if err != nil { // If the file doesn't exist
+			transferErrors++
 			continue
-		} else if !sourceFileStat.Mode().IsRegular() { // If it's a regular file
+		} else if !sourceFileStat.Mode().IsRegular() { // If it's not a regular file
+			transferErrors++
 			continue
 		}
 
 		date := sourceFileStat.ModTime().Format("2006-01-02") // Modification date.
 		newDestiny := destiny(date, config.Destiny)           // Complete path to new destination
 
-		bytes, err := copy(fileOrigin, newDestiny, file)
+		bytes, err := copy(fileOrigin, newDestiny, file) // File transfer
 
-		if err == nil {
-			fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
-			filesCopied++
+		if err == nil { // No errors in the file transfer
+			if bytes > 0 { // If it actually copied the file
+				fmt.Printf("Copied '%s' correctly (%d bytes)\n", file, bytes)
+				filesCopied++
+			}
 		} else {
 			fmt.Printf("Failed to copy '%s'\n", file)
-			fmt.Println(err)
+			transferErrors++
 		}
 	}
-	fmt.Printf("\nCopied correctly %d files\nPress enter to exit  ", filesCopied)
-	var exit string
-	fmt.Scanln(&exit)
+
+	// Results
+	if sourceErrors >= 2 { // No source folder found
+		fmt.Println("\nThe program wasn't able to locate the desired media")
+	} else if filesCopied == 0 && transferErrors == 0 { // All files already in destination
+		fmt.Println("\nThere were no new files to be copied")
+	} else if filesCopied > 0 { // New files copied to destination
+		fmt.Printf("\nCopied correctly %d files in %.2f seconds\n%d errors", filesCopied, time.Now().Sub(start).Seconds(), transferErrors)
+
+	}
+	fmt.Println("\n\nPress enter to exit")
+	fmt.Scanln()
 }
