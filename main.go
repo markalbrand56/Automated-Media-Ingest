@@ -168,8 +168,10 @@ func main() {
 		fmt.Println("\nThe program wasn't able to locate the desired media")
 	} else if filesCopied == 0 && transferErrors == 0 { // All files already in destination
 		fmt.Println("\nThere were no new files to be copied")
-	} else if filesCopied > 0 { // New files copied to destination
-		fmt.Printf("\nCopied correctly %d files in %.2f seconds\n%d errors", filesCopied, time.Now().Sub(start).Seconds(), transferErrors)
+	} else if filesCopied > 0 && sourceErrors == 0 { // New files copied to destination, every source folder found
+		fmt.Printf("\nCopied correctly %d files in %.2f seconds \n%d error(s) while copying", filesCopied, time.Now().Sub(start).Seconds(), transferErrors)
+	} else if filesCopied > 0 { // New files copied to destination, at least one source folder not found
+		fmt.Printf("\nCopied correctly %d files in %.2f seconds \n%d error(s) while copying \n%d media source not found", filesCopied, time.Now().Sub(start).Seconds(), transferErrors, sourceErrors)
 
 	}
 	fmt.Println("\n\nPress enter to exit")
