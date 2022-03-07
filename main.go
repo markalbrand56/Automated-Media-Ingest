@@ -93,7 +93,8 @@ func main() {
 	letterSD = strings.ToUpper(letterSD) // Always on uppercase
 
 	// Media search
-	var sourceErrors int = 0 // if the value is 2, both sources were not found
+	sourceErrors := 0 // if the value is 2, both sources were not found
+
 	sourceImages = pathImages(letterSD)
 	images, err = searchMedia(dataTypes, sourceImages)
 	if err != nil {
@@ -112,6 +113,7 @@ func main() {
 	filesCopied := 0
 	start := time.Now()
 	transferErrors := 0
+
 	for _, file := range images {
 		fileOrigin := sourceImages + "\\" + file // Complete pathImages to the original file
 
