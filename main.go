@@ -56,7 +56,11 @@ func main() {
 			newConfig.Pattern = newPattern
 
 			// Creation of the config file
-			os.Create(".\\config.json")
+			_, err = os.Create(".\\config.json")
+			if err != nil {
+				fmt.Println("\nError creating the configuration file. Exiting now.")
+				os.Exit(1)
+			}
 			file, _ := json.MarshalIndent(newConfig, "", " ")
 			err = ioutil.WriteFile(".\\config.json", file, 0644)
 
@@ -81,7 +85,11 @@ func main() {
 	}
 
 	fmt.Println("\nEnter the path letter for the SD card: ")
-	fmt.Scanln(&letterSD)
+	_, err = fmt.Scanln(&letterSD)
+	if err != nil {
+		fmt.Println("\nAn unexpected error occurred while reading your input. Exiting now.")
+		os.Exit(1)
+	}
 	letterSD = strings.ToUpper(letterSD) // Always on uppercase
 
 	// Media search
@@ -176,6 +184,10 @@ func main() {
 		fmt.Printf("\nCopied correctly %d files in %.2f seconds \n%d error(s) while copying \n%d media source folder not found", filesCopied, end.Sub(start).Seconds(), transferErrors, sourceErrors)
 
 	}
+
 	fmt.Println("\n\nPress enter to exit")
-	fmt.Scanln()
+	_, err = fmt.Scanln()
+	if err != nil {
+		return
+	}
 }
