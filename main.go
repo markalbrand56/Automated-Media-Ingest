@@ -89,14 +89,14 @@ func main() {
 	sourceImages = pathImages(letterSD)
 	images, err = searchMedia(dataTypes, sourceImages)
 	if err != nil {
-		fmt.Println("Error locating the source for the images")
+		fmt.Println("\nError locating the source folder for the images")
 		sourceErrors++
 	}
 
 	sourceVideos = pathVideos(letterSD)
 	videos, err = searchMedia(dataTypes, sourceVideos)
 	if err != nil {
-		fmt.Println("Error locating the source for the videos")
+		fmt.Println("\nError locating the source folder for the videos")
 		sourceErrors++
 	}
 
@@ -163,15 +163,17 @@ func main() {
 		}
 	}
 
+	end := time.Now()
+
 	// Results
 	if sourceErrors >= 2 { // No source folder found
 		fmt.Println("\nThe program wasn't able to locate the desired media")
 	} else if filesCopied == 0 && transferErrors == 0 { // All files already in destination
 		fmt.Println("\nThere were no new files to be copied")
 	} else if filesCopied > 0 && sourceErrors == 0 { // New files copied to destination, every source folder found
-		fmt.Printf("\nCopied correctly %d files in %.2f seconds \n%d error(s) while copying", filesCopied, time.Now().Sub(start).Seconds(), transferErrors)
+		fmt.Printf("\nCopied correctly %d files in %.2f seconds \n%d error(s) while copying", filesCopied, end.Sub(start).Seconds(), transferErrors)
 	} else if filesCopied > 0 { // New files copied to destination, at least one source folder not found
-		fmt.Printf("\nCopied correctly %d files in %.2f seconds \n%d error(s) while copying \n%d media source not found", filesCopied, time.Now().Sub(start).Seconds(), transferErrors, sourceErrors)
+		fmt.Printf("\nCopied correctly %d files in %.2f seconds \n%d error(s) while copying \n%d media source folder not found", filesCopied, end.Sub(start).Seconds(), transferErrors, sourceErrors)
 
 	}
 	fmt.Println("\n\nPress enter to exit")
